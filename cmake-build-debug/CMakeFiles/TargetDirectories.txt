@@ -1,0 +1,3 @@
+C:/Users/Sbala/Desktop/Code/C/Gears/cmake-build-debug/CMakeFiles/Gears.dir
+C:/Users/Sbala/Desktop/Code/C/Gears/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/Sbala/Desktop/Code/C/Gears/cmake-build-debug/CMakeFiles/rebuild_cache.dir
