@@ -5,17 +5,20 @@
 
 int main(void) {
 
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    const int screenWidth = 1600;
+    const int screenHeight = 900;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "Construction Gears Authentication");
 
-    float circleAngle = 0.0f;
-
     Vector2 v0 = { screenWidth/2.0f, screenHeight/2.0f };
-    Vector2 v1 = { screenWidth/2.0f + 20.0f, screenHeight/2.0f + 20.0f };
-    Vector2 v2 = { 0 };
+    Vector2 v1 = { screenWidth/2.0f - 60.0f, screenHeight/2.0f + 120.0f };
+    Vector2 v2 = { };
+    Vector2 v3 = { screenWidth/2.0f + 120.0f, screenHeight/2.0f - 120.0f  };
+    Vector2 v4 = { screenWidth/2.0f - 100.0f, screenHeight/2.0f + 220.0f  };
+
+    CircleConstructor circle = InitialiseCircle(v0, v1, 3.0f, 2.0f, BLUE, RED);
+    CircleConstructor circle2 = InitialiseCircle(v3, v4,3.0f, 2.0f, BLUE, RED);
 
     SetTargetFPS(60);
 
@@ -24,6 +27,9 @@ int main(void) {
         v2 = GetMousePosition();
 
         printf("(%f, %f)\n ", v2.x, v2.y);
+
+        UpdateCircle(&circle, GetFrameTime());
+        UpdateCircle(&circle2, GetFrameTime());
 
         BeginDrawing();
 
@@ -36,7 +42,8 @@ int main(void) {
             DrawLineEx(v0, v2, 2.0f, ORANGE);
 
             // DrawCircleLinesV(v0, 5, ORANGE);
-            ConstructCircle(v0, 50, &circleAngle, 6.0f, 2.0f, ORANGE, ORANGE);
+            DrawCircleConstruction(&circle);
+            DrawCircleConstruction(&circle2);
 
         EndDrawing();
     }

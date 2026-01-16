@@ -1,50 +1,61 @@
 #include "constructions.h"
+#include "raymath.h"
 #include <math.h>
 
-void ConstructCircle(Vector2 centre,
-                                  float radius,
-                                  float *angle,
-                                  float speed,
-                                  float thickness,
-                                  Color circleColor,
-                                  Color radiusColor)
-{
-    // updating angle while drawing
-    if (*angle < 2*PI)
-    {
-        *angle += speed * GetFrameTime();
-        if (*angle > 2*PI) *angle = 2*PI;
+
+// initialise all values that don't change for the same circle
+CircleConstructor InitialiseCircle(Vector2 centre, Vector2 point, float speed, float thickness, Color circleColor, Color radiusColor) {
+    CircleConstructor circle;
+    circle.centre = centre;
+    circle.point = point;
+    circle.radius = Vector2Distance(centre, point);
+    circle.speed = speed;
+    circle.thickness = thickness;
+    circle.circleColor = circleColor;
+    circle.radiusColor = radiusColor;
+    circle.initial_angle = atan2f(point.y - centre.y, point.x - centre.x);
+    circle.progress = 0.0f;
+    circle.complete = false;
+    return circle;
+}
+
+// seperate function to update the progress of the arc that can be called before the drawing loop
+void UpdateCircle(CircleConstructor* circle, float dt) {
+    if (!circle->complete) {
+        circle->progress += circle->speed * dt;
+        if (circle->progress >= 2.0f * PI) {
+            circle->progress = 2.0f * PI;
+            circle->complete = true;
+        }
     }
+}
 
-    // manually drawing circle with lines while rotation is ongoing
-    const int segments = 128;
-    float maxAngle = *angle;
-    float step = maxAngle / segments;
+// same manual method for drawing circle with ongoing rotation
+void DrawCircleConstruction(const CircleConstructor* circle) {
+    const int segments = 100;
+    float step = circle->progress / segments;
 
-    for (int i = 0; i < segments; i++)
-    {
-        float a1 = i * step;
-        float a2 = (i + 1) * step;
+    for (int i = 0; i < segments; i++) {
+        float angle1 = circle->initial_angle + i * step;
+        float angle2 = circle->initial_angle + (i + 1) * step;
 
         Vector2 p1 = {
-            centre.x + cosf(a1) * radius,
-            centre.y + sinf(a1) * radius
+            circle->centre.x + circle->radius * cosf(angle1),
+            circle->centre.y + circle->radius * sinf(angle1)
         };
         Vector2 p2 = {
-            centre.x + cosf(a2) * radius,
-            centre.y + sinf(a2) * radius
+            circle->centre.x + circle->radius * cosf(angle2),
+            circle->centre.y + circle->radius * sinf(angle2)
         };
 
-        DrawLineEx(p1, p2, thickness, circleColor);
+        DrawLineEx(p1, p2, circle->thickness, circle->circleColor);
     }
 
-    // drawing radius arm
-    float armAngle = (*angle < 2*PI) ? *angle : 0.0f;
-
-    Vector2 armEnd = {
-        centre.x + cosf(armAngle) * radius,
-        centre.y + sinf(armAngle) * radius
+    float arm_angle = circle->initial_angle + circle->progress;
+    Vector2 arm_end = {
+        circle->centre.x + circle->radius * cosf(arm_angle),
+        circle->centre.y + circle->radius * sinf(arm_angle)
     };
 
-    DrawLineEx(centre, armEnd, thickness, radiusColor);
+    DrawLineEx(circle->centre, arm_end, circle->thickness, circle->radiusColor);
 }
