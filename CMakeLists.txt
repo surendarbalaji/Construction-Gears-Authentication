@@ -22,6 +22,7 @@ FetchContent_MakeAvailable(raylib)
 set(PROJECT_SOURCES
         main.c
         ConstructCircle.c
+        ConstructBisector.c
 )
 
 # executables

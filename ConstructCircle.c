@@ -11,8 +11,8 @@ CircleConstructor InitialiseCircle(Vector2 centre, Vector2 point, float speed, f
     circle.radius = Vector2Distance(centre, point);
     circle.speed = speed;
     circle.thickness = thickness;
-    circle.circleColor = circleColor;
-    circle.radiusColor = radiusColor;
+    circle.circleColour = circleColor;
+    circle.radiusColour = radiusColor;
     circle.initial_angle = atan2f(point.y - centre.y, point.x - centre.x);
     circle.progress = 0.0f;
     circle.complete = false;
@@ -30,7 +30,7 @@ void UpdateCircle(CircleConstructor* circle, float dt) {
     }
 }
 
-// same manual method for drawing circle with ongoing rotation
+// same manual method for drawing circle with ongoing arm rotation
 void DrawCircleConstruction(const CircleConstructor* circle) {
     const int segments = 100;
     float step = circle->progress / segments;
@@ -48,7 +48,7 @@ void DrawCircleConstruction(const CircleConstructor* circle) {
             circle->centre.y + circle->radius * sinf(angle2)
         };
 
-        DrawLineEx(p1, p2, circle->thickness, circle->circleColor);
+        DrawLineEx(p1, p2, circle->thickness, circle->circleColour);
     }
 
     float arm_angle = circle->initial_angle + circle->progress;
@@ -57,5 +57,5 @@ void DrawCircleConstruction(const CircleConstructor* circle) {
         circle->centre.y + circle->radius * sinf(arm_angle)
     };
 
-    DrawLineEx(circle->centre, arm_end, circle->thickness, circle->radiusColor);
+    DrawLineEx(circle->centre, arm_end, circle->thickness, circle->radiusColour);
 }
