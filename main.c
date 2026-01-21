@@ -3,6 +3,7 @@
 #include "raymath.h"
 #include "constructions.h"
 
+
 int main(void) {
 
     const int screenWidth = 1600;
@@ -19,10 +20,10 @@ int main(void) {
     Vector2 v5 = {screenWidth/2.0f + 150.0f, screenHeight/2.0f -300.0f };
     Vector2 v6 = {screenWidth/2.0f + 200.0f, screenHeight/2.0f +100.0f };
 
-    CircleConstructor circle = InitialiseCircle(v0, v1, 3.0f, 2.0f, BLUE, RED);
-    CircleConstructor circle2 = InitialiseCircle(v3, v4,3.0f, 2.0f, BLUE, RED);
+    // CircleConstructor circle = InitialiseCircle(v0, v1, 3.0f, 2.0f, BLUE, RED);
+    // CircleConstructor circle2 = InitialiseCircle(v3, v4,3.0f, 2.0f, BLUE, RED);
 
-    BisectorConstructor bisector = InitialiseBisector(v5, v6, 3.0f, 2.0f, BLUE, RED);
+    BisectorConstructor bisector = InitialiseBisector(v5, v6, 1.5f, 2.0f, BLUE, RED);
 
     SetTargetFPS(60);
 
@@ -35,25 +36,23 @@ int main(void) {
         // float bisector_angle = initial_angle + PI/2;
         // printf("%f, %f\n", initial_angle, bisector_angle);
 
-        UpdateCircle(&circle, GetFrameTime());
-        UpdateCircle(&circle2, GetFrameTime());
+        // UpdateCircle(&circle, GetFrameTime());
+        // UpdateCircle(&circle2, GetFrameTime());
         UpdateBisector(&bisector, GetFrameTime());
-
-        DrawLineEx(v5, v6, 2.0f, RED);
 
         BeginDrawing();
 
             ClearBackground(BLACK);
 
-            DrawText("The first window", 190, 200, 20, LIGHTGRAY);
+            DrawText("perpendicular bisector construction", 190, 200, 20, LIGHTGRAY);
 
             // DrawLine(v0.x, v0.y, v2.x, v2.y, BLACK);
             // DrawLineV(v0, v2, BLACK);
-            DrawLineEx(v0, v2, 2.0f, ORANGE);
+            // DrawLineEx(v0, v2, 2.0f, ORANGE);
 
             // DrawCircleLinesV(v0, 5, ORANGE);
-            DrawCircleConstruction(&circle);
-            DrawCircleConstruction(&circle2);
+            // DrawCircleConstruction(&circle);
+            // DrawCircleConstruction(&circle2);
             DrawBisectorConstruction(&bisector);
 
         EndDrawing();
