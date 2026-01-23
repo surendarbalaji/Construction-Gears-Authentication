@@ -5,7 +5,6 @@
 
 
 int main(void) {
-
     const int screenWidth = 1600;
     const int screenHeight = 900;
 
@@ -22,29 +21,31 @@ int main(void) {
 
     // CircleConstructor circle = InitialiseCircle(v0, v1, 3.0f, 2.0f, BLUE, RED);
     // CircleConstructor circle2 = InitialiseCircle(v3, v4,3.0f, 2.0f, BLUE, RED);
-
-    BisectorConstructor bisector = InitialiseBisector(v5, v6, 1.5f, 2.0f, BLUE, RED);
+    BisectorConstructor bisector = InitialiseBisector(v5, v6, 2.5f, 2.0f, BLUE, RED);
 
     SetTargetFPS(60);
 
     while(!WindowShouldClose()) {
 
-        v2 = GetMousePosition();
+            v2 = GetMousePosition();
 
-        // printf("(%f, %f)\n ", v2.x, v2.y);
-        // float initial_angle = atan2f(v2.y - v0.y, v2.x - v0.x);
-        // float bisector_angle = initial_angle + PI/2;
-        // printf("%f, %f\n", initial_angle, bisector_angle);
+            // printf("(%f, %f)\n ", v2.x, v2.y);
+            // float initial_angle = atan2f(v2.y - v0.y, v2.x - v0.x);
+            // float bisector_angle = initial_angle + PI/2;
+            // printf("%f, %f\n", initial_angle, bisector_angle);
 
-        // UpdateCircle(&circle, GetFrameTime());
-        // UpdateCircle(&circle2, GetFrameTime());
-        UpdateBisector(&bisector, GetFrameTime());
+            // UpdateCircle(&circle, GetFrameTime());
+            // UpdateCircle(&circle2, GetFrameTime());
+            UpdateBisector(&bisector, GetFrameTime());
 
-        BeginDrawing();
+
+            BeginDrawing();
 
             ClearBackground(BLACK);
 
             DrawText("perpendicular bisector construction", 190, 200, 20, LIGHTGRAY);
+
+            // DrawRing(v0, 200.0f, 205.0f, 0, 180, 100, RAYWHITE);
 
             // DrawLine(v0.x, v0.y, v2.x, v2.y, BLACK);
             // DrawLineV(v0, v2, BLACK);
@@ -55,10 +56,10 @@ int main(void) {
             // DrawCircleConstruction(&circle2);
             DrawBisectorConstruction(&bisector);
 
-        EndDrawing();
-    }
+            EndDrawing();
+        }
 
-    CloseWindow();
+        CloseWindow();
 
-    return 0;
+        return 0;
 }

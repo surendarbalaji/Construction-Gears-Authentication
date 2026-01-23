@@ -26,7 +26,6 @@ set(PROJECT_SOURCES
 )
 
 # executables
-
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
 
 # linking Raylib

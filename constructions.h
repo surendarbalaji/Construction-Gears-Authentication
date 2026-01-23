@@ -23,6 +23,21 @@ void DrawCircleConstruction(const CircleConstructor* circle); // takes updated s
 
 // perpendicular bisector construction tools
 
+// using an enum to cycle through phases of construction
+
+typedef enum {
+    ARC1_CLOCKWISE,
+    ARC1_WIDDERSHINS,
+    ARC2_CLOCKWISE,
+    ARC2_WIDDERSHINS,
+    ARC3_CLOCKWISE,
+    ARC3_WIDDERSHINS,
+    ARC4_CLOCKWISE,
+    ARC4_WIDDERSHINS,
+    BISECTION,
+    COMPLETE
+} BisectorPhase;
+
 typedef struct {
     Vector2 point1;
     Vector2 point2;
@@ -34,7 +49,7 @@ typedef struct {
     float bisector_angle;
     Color arcColour;
     Color lineColour;
-    bool complete;
+    BisectorPhase phase;
 } BisectorConstructor;
 
 BisectorConstructor InitialiseBisector(Vector2 point1, Vector2 point2, float speed, float thickness, Color arcColour, Color lineColour);
