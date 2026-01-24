@@ -1,6 +1,5 @@
 #include "constructions.h"
 #include "raymath.h"
-#include <math.h>
 
 
 // initialise struct
@@ -25,38 +24,39 @@ void UpdateBisector(BisectorConstructor* bisector, float dt) {
     bisector->progress += bisector->speed *dt;
 
     // arc construction is split into nine sequences of arc drawing, the update function now cycles through them
-    if (bisector->progress >= 1.0) {
+    if (bisector->progress >= 1.0f) {
         bisector->progress = 0.0f;
 
         switch (bisector->phase) {
             case ARC1_CLOCKWISE:
                 bisector->phase = ARC1_WIDDERSHINS;
-            break;
+                break;
             case ARC1_WIDDERSHINS:
                 bisector->phase = ARC2_WIDDERSHINS;
-            break;
+                break;
             case ARC2_WIDDERSHINS:
                 bisector->phase = ARC2_CLOCKWISE;
-            break;
+                break;
             case ARC2_CLOCKWISE:
                 bisector->phase = ARC3_CLOCKWISE;
-            break;
+                break;
             case ARC3_CLOCKWISE:
                 bisector->phase = ARC3_WIDDERSHINS;
-            break;
+                break;
             case ARC3_WIDDERSHINS:
                 bisector->phase = ARC4_CLOCKWISE;
-            break;
+                break;
             case ARC4_CLOCKWISE:
                 bisector->phase = ARC4_WIDDERSHINS;
-            break;
+                break;
             case ARC4_WIDDERSHINS:
                 bisector->phase = BISECTION;
-            break;
+                break;
             case BISECTION:
-                bisector->phase = COMPLETE;
-            case COMPLETE:
-                bisector->phase = COMPLETE;
+                bisector->phase = BISECTORCOMPLETE;
+                case BISECTORCOMPLETE:
+                bisector->phase = BISECTORCOMPLETE;
+                break;
             }
         }
     }
@@ -76,6 +76,25 @@ void DrawArc(Vector2 centre, float radius, float initial_angle, float rotation_d
     };
 
     DrawLineEx(centre, arm_end, thickness, lineColour);
+}
+
+void DrawBisectingLine(Vector2 point1, Vector2 point2, float length, float bisector_angle, float progress, float thickness, Color lineColour) {
+
+    // TRIGONOMETRY !!!!! (drawing perpendicular bisector itself)
+    // we are finding the length of the new bisector line by multiplying length between our two points by sin pi/3 (this angle is constant since the arcs have radius equal to length between points)
+    // this is multiplied the sine and cosine of the bisector angle to find the change in x and y respectively, then finally added to the midpoint
+    Vector2 bisectorPoint = {
+        (point1.x + point2.x) / 2 + (progress * length * sinf(PI/3) * cosf(bisector_angle) * 1.2),
+        (point1.y + point2.y) / 2 + (progress * length * sinf(PI/3) * sinf(bisector_angle) * 1.2)
+    };
+
+    // same thing, opposite direction
+    Vector2 bisectorPoint2 = {
+        (point1.x + point2.x) / 2 - (progress * length * sinf(PI/3) * cosf(bisector_angle) * 1.2),
+        (point1.y + point2.y) / 2 - (progress * length * sinf(PI/3) * sinf(bisector_angle) * 1.2)
+    };
+
+    DrawLineEx(bisectorPoint, bisectorPoint2, thickness, lineColour);
 
 }
 
@@ -139,43 +158,18 @@ void DrawBisectorConstruction(const BisectorConstructor* bisector) {
             DrawRing(bisector->point2, bisector->length, bisector->length + bisector->thickness, (360 * bisector->initial_angle) / (2 * PI) + 252, (360 * bisector->initial_angle) / (2 * PI) + 108, 100, bisector->arcColour);
             DrawLineEx(bisector->point1, bisector->point2, bisector->thickness, bisector->lineColour);
 
-            // TRIGONOMETRY !!!!! (drawing perpendicular bisector itself)
-            // we are finding the length of the new bisector line by multiplying length between our two points by sin pi/3 (this angle is constant since the arcs have radius equal to length between points)
-            // this is multiplied the sine and cosine of the bisector angle to find the change in x and y respectively, then finally added to the midpoint
-            Vector2 bisectorPoint = {
-                (bisector->point1.x + bisector->point2.x) / 2 + (bisector->progress * bisector->length * sinf(PI/3) * cosf(bisector->bisector_angle) * 1.2),
-                (bisector->point1.y + bisector->point2.y) / 2 + (bisector->progress * bisector->length * sinf(PI/3) * sinf(bisector->bisector_angle) * 1.2)
-            };
-
-            // same thing, opposite direction
-            Vector2 bisectorPoint2 = {
-                (bisector->point1.x + bisector->point2.x) / 2 - (bisector->progress * bisector->length * sinf(PI/3) * cosf(bisector->bisector_angle) * 1.2),
-                (bisector->point1.y + bisector->point2.y) / 2 - (bisector->progress * bisector->length * sinf(PI/3) * sinf(bisector->bisector_angle) * 1.2)
-            };
-
-            DrawLineEx(bisectorPoint, bisectorPoint2, bisector->thickness, bisector->lineColour);
+            DrawBisectingLine(bisector->point1, bisector->point2, bisector->length, bisector->bisector_angle, bisector->progress, bisector->thickness, bisector->lineColour);
 
             break;
 
-        case COMPLETE:
+        case BISECTORCOMPLETE:
 
             DrawRing(bisector->point1, bisector->length, bisector->length + bisector->thickness, (360 * bisector->initial_angle) / (2 * PI) + 72 , (360 * bisector->initial_angle) / (2 * PI) - 72, 100, bisector->arcColour);
             DrawRing(bisector->point2, bisector->length, bisector->length + bisector->thickness, (360 * bisector->initial_angle) / (2 * PI) + 252, (360 * bisector->initial_angle) / (2 * PI) + 108, 100, bisector->arcColour);
             DrawLineEx(bisector->point1, bisector->point2, bisector->thickness, bisector->lineColour);
 
-        // copy pasting this again without the progress parameter because I will figure out how to reuse the previous decleration later
+            DrawBisectingLine(bisector->point1, bisector->point2, bisector->length, bisector->bisector_angle, 1.0f, bisector->thickness, bisector->lineColour);
 
-        Vector2 bisectorPoint1again = {
-            (bisector->point1.x + bisector->point2.x) / 2 + (bisector->length * sinf(PI/3) * cosf(bisector->bisector_angle) * 1.2),
-            (bisector->point1.y + bisector->point2.y) / 2 + (bisector->length * sinf(PI/3) * sinf(bisector->bisector_angle) * 1.2)
-        };
-
-        Vector2 bisectorPoint2again = {
-            (bisector->point1.x + bisector->point2.x) / 2 - (bisector->length * sinf(PI/3) * cosf(bisector->bisector_angle) * 1.2),
-            (bisector->point1.y + bisector->point2.y) / 2 - (bisector->length * sinf(PI/3) * sinf(bisector->bisector_angle) * 1.2)
-        };
-
-            DrawLineEx(bisectorPoint1again, bisectorPoint2again, bisector->thickness, bisector->lineColour);
+            break;
     }
-
 }

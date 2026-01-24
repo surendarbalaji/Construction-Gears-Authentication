@@ -1,6 +1,5 @@
 #include "constructions.h"
 #include "raymath.h"
-#include <math.h>
 
 
 // initialise all values that don't change for the same circle

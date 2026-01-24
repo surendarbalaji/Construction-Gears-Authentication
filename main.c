@@ -1,6 +1,4 @@
-#include <stdio.h>
 #include "raylib.h"
-#include "raymath.h"
 #include "constructions.h"
 
 
@@ -14,14 +12,14 @@ int main(void) {
     Vector2 v0 = { screenWidth/2.0f, screenHeight/2.0f };
     Vector2 v1 = { screenWidth/2.0f - 60.0f, screenHeight/2.0f + 120.0f };
     Vector2 v2 = { 0 };
-    Vector2 v3 = { screenWidth/2.0f + 120.0f, screenHeight/2.0f - 120.0f  };
-    Vector2 v4 = { screenWidth/2.0f - 100.0f, screenHeight/2.0f + 220.0f  };
+    Vector2 v3 = { screenWidth/2.0f + 320.0f, screenHeight/2.0f + 160.0f  };
+    Vector2 v4 = { screenWidth/2.0f + 160.0f, screenHeight/2.0f + 260.0f  };
     Vector2 v5 = {screenWidth/2.0f + 150.0f, screenHeight/2.0f -300.0f };
     Vector2 v6 = {screenWidth/2.0f + 200.0f, screenHeight/2.0f +100.0f };
 
-    // CircleConstructor circle = InitialiseCircle(v0, v1, 3.0f, 2.0f, BLUE, RED);
-    // CircleConstructor circle2 = InitialiseCircle(v3, v4,3.0f, 2.0f, BLUE, RED);
+    CircleConstructor circle = InitialiseCircle(v3, v4, 2.0f, 2.0f, GOLD, GRAY);
     BisectorConstructor bisector = InitialiseBisector(v5, v6, 2.5f, 2.0f, BLUE, RED);
+    EquilateralConstructor equilateral = InitialiseEquilateral(v0, v1, 3.5f, 2.0f, ORANGE, RAYWHITE );
 
     SetTargetFPS(60);
 
@@ -34,27 +32,31 @@ int main(void) {
             // float bisector_angle = initial_angle + PI/2;
             // printf("%f, %f\n", initial_angle, bisector_angle);
 
-            // UpdateCircle(&circle, GetFrameTime());
-            // UpdateCircle(&circle2, GetFrameTime());
+            UpdateCircle(&circle, GetFrameTime());
             UpdateBisector(&bisector, GetFrameTime());
+            UpdateEquilateral(&equilateral, GetFrameTime());
 
 
             BeginDrawing();
 
-            ClearBackground(BLACK);
+                ClearBackground(BLACK);
 
-            DrawText("perpendicular bisector construction", 190, 200, 20, LIGHTGRAY);
+                DrawText("the elements", 190, 200, 20, LIGHTGRAY);
 
-            // DrawRing(v0, 200.0f, 205.0f, 0, 180, 100, RAYWHITE);
+                // BeginBlendMode(1);
 
-            // DrawLine(v0.x, v0.y, v2.x, v2.y, BLACK);
-            // DrawLineV(v0, v2, BLACK);
-            // DrawLineEx(v0, v2, 2.0f, ORANGE);
+                // DrawRing(v0, 200.0f, 205.0f, 0, 180, 100, RAYWHITE);
 
-            // DrawCircleLinesV(v0, 5, ORANGE);
-            // DrawCircleConstruction(&circle);
-            // DrawCircleConstruction(&circle2);
-            DrawBisectorConstruction(&bisector);
+                // DrawLine(v0.x, v0.y, v2.x, v2.y, BLACK);
+                // DrawLineV(v0, v2, BLACK);
+                // DrawLineEx(v0, v2, 2.0f, ORANGE);
+                // DrawCircleLinesV(v0, 5, ORANGE);
+
+                DrawCircleConstruction(&circle);
+                DrawBisectorConstruction(&bisector);
+                DrawEquilateralConstruction(&equilateral);
+
+                // EndBlendMode();
 
             EndDrawing();
         }

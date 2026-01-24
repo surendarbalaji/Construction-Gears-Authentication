@@ -23,6 +23,7 @@ set(PROJECT_SOURCES
         main.c
         ConstructCircle.c
         ConstructBisector.c
+        ConstructEquilateral.c
 )
 
 # executables

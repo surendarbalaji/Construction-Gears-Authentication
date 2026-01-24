@@ -35,7 +35,7 @@ typedef enum {
     ARC4_CLOCKWISE,
     ARC4_WIDDERSHINS,
     BISECTION,
-    COMPLETE
+    BISECTORCOMPLETE
 } BisectorPhase;
 
 typedef struct {
@@ -55,3 +55,35 @@ typedef struct {
 BisectorConstructor InitialiseBisector(Vector2 point1, Vector2 point2, float speed, float thickness, Color arcColour, Color lineColour);
 void UpdateBisector(BisectorConstructor* bisector, float dt);
 void DrawBisectorConstruction(const BisectorConstructor* bisector);
+
+
+// equilateral triangle construction tools
+
+typedef enum {
+    CIRCLES,
+    SIDES,
+    EQUILATERALCOMPLETE
+} EquilateralPhase;
+
+typedef struct {
+    Vector2 point1;
+    Vector2 point2;
+    Vector2 point3;
+    float progress;
+    float length;
+    float speed;
+    float thickness;
+    float initial_angle;
+    Color arcColour;
+    Color lineColour;
+    EquilateralPhase phase;
+
+    CircleConstructor circleA;
+    CircleConstructor circleB;
+
+} EquilateralConstructor;
+
+EquilateralConstructor InitialiseEquilateral(Vector2 point1, Vector2 point2, float speed, float thickness, Color arcColour, Color lineColour);
+void UpdateEquilateral(EquilateralConstructor* bisector, float dt);
+void DrawEquilateralConstruction(const EquilateralConstructor* equilateral);
+
