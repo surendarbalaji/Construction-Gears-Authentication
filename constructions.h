@@ -39,8 +39,8 @@ typedef enum {
 } BisectorPhase;
 
 typedef struct {
-    Vector2 point1;
-    Vector2 point2;
+    Vector2 pointA;
+    Vector2 pointB;
     float progress;
     float length;
     float speed;
@@ -52,7 +52,7 @@ typedef struct {
     BisectorPhase phase;
 } BisectorConstructor;
 
-BisectorConstructor InitialiseBisector(Vector2 point1, Vector2 point2, float speed, float thickness, Color arcColour, Color lineColour);
+BisectorConstructor InitialiseBisector(Vector2 pointA, Vector2 pointB, float speed, float thickness, Color arcColour, Color lineColour);
 void UpdateBisector(BisectorConstructor* bisector, float dt);
 void DrawBisectorConstruction(const BisectorConstructor* bisector);
 
@@ -66,9 +66,9 @@ typedef enum {
 } EquilateralPhase;
 
 typedef struct {
-    Vector2 point1;
-    Vector2 point2;
-    Vector2 point3;
+    Vector2 pointA;
+    Vector2 pointB;
+    Vector2 pointC;
     float progress;
     float length;
     float speed;
@@ -83,7 +83,48 @@ typedef struct {
 
 } EquilateralConstructor;
 
-EquilateralConstructor InitialiseEquilateral(Vector2 point1, Vector2 point2, float speed, float thickness, Color arcColour, Color lineColour);
-void UpdateEquilateral(EquilateralConstructor* bisector, float dt);
+EquilateralConstructor InitialiseEquilateral(Vector2 pointA, Vector2 pointB, float speed, float thickness, Color arcColour, Color lineColour);
+void UpdateEquilateral(EquilateralConstructor* equilateral, float dt);
 void DrawEquilateralConstruction(const EquilateralConstructor* equilateral);
+
+
+// equal line construction tools
+
+typedef enum {
+    LINEBC,
+    EQUILATERAL,
+    CIRCLEBA,
+    EXTENDDB,
+    CIRCLEDE,
+    EXTENDDC,
+    EQUALLINECOMPLETE
+} EqualLinePhase;
+
+typedef struct {
+    Vector2 pointA;
+    Vector2 pointB;
+    Vector2 pointC;
+    Vector2 pointE;
+    Vector2 pointF;
+    float progress;
+    float length;
+    float speed;
+    float thickness;
+    float angle_BE;
+    float angle_CF;
+    Color arcColour;
+    Color lineColour;
+    EqualLinePhase phase;
+
+    EquilateralConstructor equilateralBC;
+    CircleConstructor circleBA;
+    CircleConstructor circleDE;
+
+} EqualLineConstructor;
+
+EqualLineConstructor InitialiseEqualLine(Vector2 pointA, Vector2 pointB, Vector2 pointC, float speed, float thickness, Color arcColour, Color lineColour);
+void UpdateEqualLine(EqualLineConstructor* equalLine, float dt);
+void DrawEqualLineConstruction(const EqualLineConstructor* equalLine);
+
+
 

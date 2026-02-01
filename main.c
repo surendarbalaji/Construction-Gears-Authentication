@@ -17,51 +17,54 @@ int main(void) {
     Vector2 v5 = {screenWidth/2.0f + 150.0f, screenHeight/2.0f -300.0f };
     Vector2 v6 = {screenWidth/2.0f + 200.0f, screenHeight/2.0f +100.0f };
 
-    CircleConstructor circle = InitialiseCircle(v3, v4, 2.0f, 2.0f, GOLD, GRAY);
-    BisectorConstructor bisector = InitialiseBisector(v5, v6, 2.5f, 2.0f, BLUE, RED);
-    EquilateralConstructor equilateral = InitialiseEquilateral(v0, v1, 3.5f, 2.0f, ORANGE, RAYWHITE );
+    // CircleConstructor circle = InitialiseCircle(v3, v4, 2.0f, 2.0f, GOLD, GRAY);
+    // BisectorConstructor bisector = InitialiseBisector(v5, v6, 2.5f, 2.0f, BLUE, RED);
+    // EquilateralConstructor equilateral = InitialiseEquilateral(v0, v1, 3.5f, 2.0f, ORANGE, RAYWHITE );
+    EqualLineConstructor equalLine = InitialiseEqualLine(v0, v1, v6, 3.5f, 2.0f, ORANGE, RAYWHITE);
 
     SetTargetFPS(60);
 
     while(!WindowShouldClose()) {
 
-            v2 = GetMousePosition();
+        v2 = GetMousePosition();
 
-            // printf("(%f, %f)\n ", v2.x, v2.y);
-            // float initial_angle = atan2f(v2.y - v0.y, v2.x - v0.x);
-            // float bisector_angle = initial_angle + PI/2;
-            // printf("%f, %f\n", initial_angle, bisector_angle);
+        // printf("(%f, %f)\n ", v2.x, v2.y);
+        // float initial_angle = atan2f(v2.y - v0.y, v2.x - v0.x);
+        // float bisector_angle = initial_angle + PI/2;
+        // printf("%f, %f\n", initial_angle, bisector_angle);
 
-            UpdateCircle(&circle, GetFrameTime());
-            UpdateBisector(&bisector, GetFrameTime());
-            UpdateEquilateral(&equilateral, GetFrameTime());
+        // UpdateCircle(&circle, GetFrameTime());
+        // UpdateBisector(&bisector, GetFrameTime());
+        // UpdateEquilateral(&equilateral, GetFrameTime());
+        UpdateEqualLine(&equalLine, GetFrameTime());
 
 
-            BeginDrawing();
+        BeginDrawing();
 
-                ClearBackground(BLACK);
+            ClearBackground(BLACK);
 
-                DrawText("the elements", 190, 200, 20, LIGHTGRAY);
+            DrawText("the elements", 190, 200, 20, LIGHTGRAY);
 
-                // BeginBlendMode(1);
+            // BeginBlendMode(1);
 
-                // DrawRing(v0, 200.0f, 205.0f, 0, 180, 100, RAYWHITE);
+            // DrawRing(v0, 200.0f, 205.0f, 0, 180, 100, RAYWHITE);
 
-                // DrawLine(v0.x, v0.y, v2.x, v2.y, BLACK);
-                // DrawLineV(v0, v2, BLACK);
-                // DrawLineEx(v0, v2, 2.0f, ORANGE);
-                // DrawCircleLinesV(v0, 5, ORANGE);
+            // DrawLine(v0.x, v0.y, v2.x, v2.y, BLACK);
+            // DrawLineV(v0, v2, BLACK);
+            // DrawLineEx(v0, v2, 2.0f, ORANGE);
+            // DrawCircleLinesV(v0, 5, ORANGE);
 
-                DrawCircleConstruction(&circle);
-                DrawBisectorConstruction(&bisector);
-                DrawEquilateralConstruction(&equilateral);
+            // DrawCircleConstruction(&circle);
+            // DrawBisectorConstruction(&bisector);
+            // DrawEquilateralConstruction(&equilateral);
+            DrawEqualLineConstruction(&equalLine);
 
-                // EndBlendMode();
+        // EndBlendMode();
 
-            EndDrawing();
-        }
+        EndDrawing();
+    }
 
-        CloseWindow();
+    CloseWindow();
 
-        return 0;
+    return 0;
 }

@@ -24,6 +24,7 @@ set(PROJECT_SOURCES
         ConstructCircle.c
         ConstructBisector.c
         ConstructEquilateral.c
+        ConstructEqualLine.c
 )
 
 # executables
