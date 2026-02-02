@@ -13,6 +13,8 @@ EquilateralConstructor InitialiseEquilateral(Vector2 pointA, Vector2 pointB, Vec
     equilateral.lineColour = lineColour;
     equilateral.initial_angle = atan2f(pointB.y - pointA.y, pointB.x - pointA.x);
 
+    // finding both intersections to allow for selection in certain situations (like wanting the triangle to face away from an angle bisection)
+
     Vector2 point1 = (Vector2) {
         pointA.x + equilateral.length * cosf(equilateral.initial_angle + PI/3),
         pointA.y + equilateral.length * sinf(equilateral.initial_angle + PI/3)}; // intersection point 1
