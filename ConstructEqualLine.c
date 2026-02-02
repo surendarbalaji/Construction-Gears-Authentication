@@ -1,7 +1,7 @@
 #include "constructions.h"
 #include "raymath.h"
 
-EqualLineConstructor InitialiseEqualLine(Vector2 pointA, Vector2 pointB, Vector2 pointC, float speed, float thickness, Color arcColour, Color lineColour) {
+EqualLineConstructor InitialiseEqualLine(Vector2 pointA, Vector2 pointB, Vector2 pointC, float speed, float thickness, Color lengthColour, Color arcColour, Color equilateralLineColour, Color equilateralArcColour) {
     EqualLineConstructor equalLine;
     equalLine.pointA = pointA;
     equalLine.pointB = pointB;
@@ -9,20 +9,24 @@ EqualLineConstructor InitialiseEqualLine(Vector2 pointA, Vector2 pointB, Vector2
     equalLine.length = Vector2Distance(pointA, pointB);
     equalLine.speed = speed;
     equalLine.thickness = thickness;
+    equalLine.lengthColour = lengthColour;
     equalLine.arcColour = arcColour;
-    equalLine.lineColour = lineColour;
+    equalLine.equilateralLineColour = equilateralLineColour;
+    equalLine.equilateralArcColour = equilateralArcColour;
     equalLine.progress = 0.0f;
     equalLine.phase = LINEBC;
 
-    equalLine.equilateralBC = InitialiseEquilateral(pointB, pointC, speed, thickness, arcColour, lineColour);
-    equalLine.circleBA = InitialiseCircle(pointB, pointA, speed, thickness, arcColour, lineColour);
+    equalLine.equilateralBC = InitialiseEquilateral(pointB, pointC, speed, thickness, equilateralArcColour, equilateralLineColour);
+    equalLine.circleBA = InitialiseCircle(pointB, pointA, speed, thickness, arcColour, lengthColour);
+
+    // needs to be in this order since it references points from within the equilateral.
 
     equalLine.angle_BE = atan2(equalLine.equilateralBC.pointC.y - pointB.y, equalLine.equilateralBC.pointC.x - pointB.x) + PI; // angle for DB extension
     equalLine.angle_CF = atan2(equalLine.equilateralBC.pointC.y - pointC.y, equalLine.equilateralBC.pointC.x - pointC.x) + PI; // angle for DC extension
-    equalLine.pointE = (Vector2){pointB.x + equalLine.length * cosf(equalLine.angle_BE), pointB.y + equalLine.length * sinf(equalLine.angle_BE)};
-    equalLine.pointF = (Vector2){pointC.x + equalLine.length * cosf(equalLine.angle_CF), pointC.y + equalLine.length * sinf(equalLine.angle_CF)};
+    equalLine.pointE = (Vector2){pointB.x + equalLine.length * cosf(equalLine.angle_BE), pointB.y + equalLine.length * sinf(equalLine.angle_BE)}; // point to which DB extends
+    equalLine.pointF = (Vector2){pointC.x + equalLine.length * cosf(equalLine.angle_CF), pointC.y + equalLine.length * sinf(equalLine.angle_CF)}; // point to which DC extends
 
-    equalLine.circleDE = InitialiseCircle(equalLine.equilateralBC.pointC, equalLine.pointE, speed, thickness, arcColour, lineColour);
+    equalLine.circleDE = InitialiseCircle(equalLine.equilateralBC.pointC, equalLine.pointE, speed, thickness, arcColour, equilateralLineColour);
 
     return equalLine;
 }
@@ -35,7 +39,7 @@ void UpdateEqualLine(EqualLineConstructor* equalLine, float dt) {
 
         case LINEBC:
             equalLine->progress += equalLine->speed * dt;
-            if (equalLine->progress >= 2.0f * PI) {
+            if (equalLine->progress >= 1.0f) {
                 equalLine->progress = 0.0f;
                 equalLine->phase = EQUILATERAL;
             }
@@ -53,20 +57,21 @@ void UpdateEqualLine(EqualLineConstructor* equalLine, float dt) {
 
         case EXTENDDB:
             equalLine->progress += equalLine->speed * dt;
-            if (equalLine->progress >= 2.0f * PI) {
+            if (equalLine->progress >= 1.0f) {
                 equalLine->progress = 0.0f;
                 equalLine->phase = CIRCLEDE;
             }
             break;
 
         case CIRCLEDE:
+            equalLine->equilateralBC.hideMask = EQUILATERAL_HIDEAC;
             UpdateCircle(&equalLine->circleDE, dt);
             if (equalLine->circleDE.complete) equalLine->phase = EXTENDDC;
             break;
 
         case EXTENDDC:
             equalLine->progress += equalLine->speed * dt;
-            if (equalLine->progress >= 2.0f * PI) {
+            if (equalLine->progress >= 1.0f) {
                 equalLine->progress = 0.0f;
                 equalLine->phase = EQUALLINECOMPLETE;
             }
@@ -81,68 +86,49 @@ void UpdateEqualLine(EqualLineConstructor* equalLine, float dt) {
 
 void DrawEqualLineConstruction(const EqualLineConstructor* equalLine) {
 
-    DrawCircleV(equalLine->pointE, 10.0f, RED);
-    DrawCircleV(equalLine->pointF, 10.0f, RED);
-
     switch (equalLine->phase) {
 
         case LINEBC:
-            DrawLineEx(equalLine->pointA, equalLine->pointB, equalLine->thickness, equalLine->lineColour);
-            DrawLineEx(equalLine->pointB, Vector2Lerp(equalLine->pointB, equalLine->pointC, equalLine->progress / (2.0f * PI)), equalLine->thickness, equalLine->lineColour);
+            DrawLineEx(equalLine->pointA, equalLine->pointB, equalLine->thickness, equalLine->lengthColour);
+            DrawLineEx(equalLine->pointB, Vector2Lerp(equalLine->pointB, equalLine->pointC, equalLine->progress), equalLine->thickness, equalLine->equilateralLineColour);
             break;
 
         case EQUILATERAL:
-            DrawLineEx(equalLine->pointA, equalLine->pointB, equalLine->thickness, equalLine->lineColour);
+            DrawLineEx(equalLine->pointA, equalLine->pointB, equalLine->thickness, equalLine->lengthColour);
 
             DrawEquilateralConstruction(&equalLine->equilateralBC);
             break;
 
         case CIRCLEBA:
-            DrawLineEx(equalLine->pointB, equalLine->pointC, equalLine->thickness, equalLine->lineColour);
-
             DrawEquilateralConstruction(&equalLine->equilateralBC);
             DrawCircleConstruction(&equalLine->circleBA);
             break;
 
         case EXTENDDB:
-            DrawLineEx(equalLine->pointA, equalLine->pointB, equalLine->thickness, equalLine->lineColour);
-            DrawLineEx(equalLine->pointB, equalLine->pointC, equalLine->thickness, equalLine->lineColour);
-
             DrawEquilateralConstruction(&equalLine->equilateralBC);
             DrawCircleConstruction(&equalLine->circleBA);
 
-            DrawLineEx(equalLine->pointB, Vector2Lerp(equalLine->pointB, equalLine->pointE, equalLine->progress / (2.0f * PI)), equalLine->thickness, equalLine->lineColour);
+            DrawLineEx(equalLine->pointB, Vector2Lerp(equalLine->pointB, equalLine->pointE, equalLine->progress), equalLine->thickness, equalLine->equilateralLineColour);
             break;
 
         case CIRCLEDE:
-            DrawLineEx(equalLine->pointA, equalLine->pointB, equalLine->thickness, equalLine->lineColour);
-            DrawLineEx(equalLine->pointB, equalLine->pointC, equalLine->thickness, equalLine->lineColour);
-            DrawLineEx(equalLine->pointB, equalLine->pointE, equalLine->thickness, equalLine->lineColour);
-
             DrawEquilateralConstruction(&equalLine->equilateralBC);
             DrawCircleConstruction(&equalLine->circleBA);
             DrawCircleConstruction(&equalLine->circleDE);
 
-            DrawLineEx(equalLine->equilateralBC.pointC, equalLine->pointE, equalLine->thickness, BLACK);
+            // DrawLineEx(equalLine->equilateralBC.pointC, equalLine->pointE, equalLine->thickness, BLACK);
             break;
 
         case EXTENDDC:
-            DrawLineEx(equalLine->pointA, equalLine->pointB, equalLine->thickness, equalLine->lineColour);
-            DrawLineEx(equalLine->pointB, equalLine->pointC, equalLine->thickness, equalLine->lineColour);
-            DrawLineEx(equalLine->pointB, equalLine->pointE, equalLine->thickness, equalLine->lineColour);
-
             DrawEquilateralConstruction(&equalLine->equilateralBC);
             DrawCircleConstruction(&equalLine->circleBA);
             DrawCircleConstruction(&equalLine->circleDE);
 
-            DrawLineEx(equalLine->pointC, Vector2Lerp(equalLine->pointC, equalLine->pointF, equalLine->progress / (2.0f * PI)), equalLine->thickness, equalLine->lineColour);
+            DrawLineEx(equalLine->pointC, Vector2Lerp(equalLine->pointC, equalLine->pointF, equalLine->progress), equalLine->thickness, equalLine->lengthColour);
             break;
 
         case EQUALLINECOMPLETE:
-            DrawLineEx(equalLine->pointA, equalLine->pointB, equalLine->thickness, equalLine->lineColour);
-            DrawLineEx(equalLine->pointB, equalLine->pointC, equalLine->thickness, equalLine->lineColour);
-            DrawLineEx(equalLine->pointB, equalLine->pointE, equalLine->thickness, equalLine->lineColour);
-            DrawLineEx(equalLine->pointC, equalLine->pointF, equalLine->thickness, equalLine->lineColour);
+            DrawLineEx(equalLine->pointC, equalLine->pointF, equalLine->thickness, equalLine->lengthColour);
 
             DrawEquilateralConstruction(&equalLine->equilateralBC);
             DrawCircleConstruction(&equalLine->circleBA);

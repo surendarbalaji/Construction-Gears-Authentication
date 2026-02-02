@@ -17,10 +17,10 @@ int main(void) {
     Vector2 v5 = {screenWidth/2.0f + 150.0f, screenHeight/2.0f -300.0f };
     Vector2 v6 = {screenWidth/2.0f + 200.0f, screenHeight/2.0f +100.0f };
 
-    // CircleConstructor circle = InitialiseCircle(v3, v4, 2.0f, 2.0f, GOLD, GRAY);
+    // CircleConstructor circle = InitialiseCircle(v3, v4, 2.0f, 0.5f, GOLD, GRAY);
     // BisectorConstructor bisector = InitialiseBisector(v5, v6, 2.5f, 2.0f, BLUE, RED);
-    // EquilateralConstructor equilateral = InitialiseEquilateral(v0, v1, 3.5f, 2.0f, ORANGE, RAYWHITE );
-    EqualLineConstructor equalLine = InitialiseEqualLine(v0, v1, v6, 3.5f, 2.0f, ORANGE, RAYWHITE);
+    // EquilateralConstructor equilateral = InitialiseEquilateral(v0, v1, 0.5f, 2.0f, ORANGE, RAYWHITE);
+    EqualLineConstructor equalLine = InitialiseEqualLine(v0, v1, v6, 1.0f, 2.0f, RED, BLUE, RAYWHITE, GOLD);
 
     SetTargetFPS(60);
 

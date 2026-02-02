@@ -1,5 +1,6 @@
 #pragma once
 #include "raylib.h"
+#include <stdint.h>
 
 // circle construction tools
 
@@ -77,11 +78,17 @@ typedef struct {
     Color arcColour;
     Color lineColour;
     EquilateralPhase phase;
+    uint8_t hideMask;
 
     CircleConstructor circleA;
     CircleConstructor circleB;
 
 } EquilateralConstructor;
+
+#define EQUILATERAL_SHOW 0 // using a bitmask to be able to hide lines
+#define EQUILATERAL_HIDEAB (1 << 0) // is it legal to put definitions half way down the file?
+#define EQUILATERAL_HIDEAC (1 << 1)
+#define EQUILATERAL_HIDEBC (1 << 2)
 
 EquilateralConstructor InitialiseEquilateral(Vector2 pointA, Vector2 pointB, float speed, float thickness, Color arcColour, Color lineColour);
 void UpdateEquilateral(EquilateralConstructor* equilateral, float dt);
@@ -112,8 +119,10 @@ typedef struct {
     float thickness;
     float angle_BE;
     float angle_CF;
+    Color lengthColour;
     Color arcColour;
-    Color lineColour;
+    Color equilateralLineColour;
+    Color equilateralArcColour;
     EqualLinePhase phase;
 
     EquilateralConstructor equilateralBC;
@@ -122,7 +131,7 @@ typedef struct {
 
 } EqualLineConstructor;
 
-EqualLineConstructor InitialiseEqualLine(Vector2 pointA, Vector2 pointB, Vector2 pointC, float speed, float thickness, Color arcColour, Color lineColour);
+EqualLineConstructor InitialiseEqualLine(Vector2 pointA, Vector2 pointB, Vector2 pointC, float speed, float thickness, Color lengthColour, Color arcColour, Color equilateralLineColour, Color equilateralArcColour);
 void UpdateEqualLine(EqualLineConstructor* equalLine, float dt);
 void DrawEqualLineConstruction(const EqualLineConstructor* equalLine);
 

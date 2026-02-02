@@ -16,6 +16,7 @@ EquilateralConstructor InitialiseEquilateral(Vector2 pointA, Vector2 pointB, flo
         pointA.y + equilateral.length * sinf(equilateral.initial_angle + PI/3)}; // intersection point
     equilateral.progress = 0.0f;
     equilateral.phase = CIRCLES;
+    equilateral.hideMask = 0;
 
     // assigning circle constructions to the equilateral construction
     equilateral.circleA = InitialiseCircle(pointA, pointB, speed, thickness, arcColour, lineColour);
@@ -31,7 +32,7 @@ void UpdateEquilateral(EquilateralConstructor* equilateral, float dt) {
     UpdateCircle(&equilateral->circleA, dt);
     UpdateCircle(&equilateral->circleB, dt);
 
-    if (equilateral->progress >= 2.0f * PI) {
+    if (equilateral->progress >= 1.0f) {
         equilateral->progress = 0.0f;
 
         switch (equilateral->phase) {
@@ -64,18 +65,22 @@ void DrawEquilateralConstruction(const EquilateralConstructor* equilateral) {
             DrawLineEx(equilateral->pointA, equilateral->pointB, equilateral->thickness, equilateral->lineColour);
 
             // using lerp to animate drawing, dividing by 2pi since progress is multiplied to be an angle
-            DrawLineEx(equilateral->pointA, Vector2Lerp(equilateral->pointA, equilateral->pointC, equilateral->progress / (2.0f * PI)), equilateral->thickness, equilateral->lineColour);
-            DrawLineEx(equilateral->pointB, Vector2Lerp(equilateral->pointB, equilateral->pointC, equilateral->progress / (2.0f * PI)), equilateral->thickness, equilateral->lineColour);
+            DrawLineEx(equilateral->pointA, Vector2Lerp(equilateral->pointA, equilateral->pointC, equilateral->progress), equilateral->thickness, equilateral->lineColour);
+            DrawLineEx(equilateral->pointB, Vector2Lerp(equilateral->pointB, equilateral->pointC, equilateral->progress), equilateral->thickness, equilateral->lineColour);
             break;
 
         case EQUILATERALCOMPLETE:
 
             DrawCircleLinesV(equilateral->pointA, equilateral->length, equilateral->arcColour);
             DrawCircleLinesV(equilateral->pointB, equilateral->length, equilateral->arcColour);
-            DrawLineEx(equilateral->pointA, equilateral->pointB, equilateral->thickness, equilateral->lineColour);
 
-            DrawLineEx(equilateral->pointA, equilateral->pointC, equilateral->thickness, equilateral->lineColour);
-            DrawLineEx(equilateral->pointB, equilateral->pointC, equilateral->thickness, equilateral->lineColour);
+            if (!(equilateral->hideMask & EQUILATERAL_HIDEAB))
+                DrawLineEx(equilateral->pointA, equilateral->pointB, equilateral->thickness, equilateral->lineColour);
+            if (!(equilateral->hideMask & EQUILATERAL_HIDEAC))
+                DrawLineEx(equilateral->pointA, equilateral->pointC, equilateral->thickness, equilateral->lineColour);
+            if (!(equilateral->hideMask & EQUILATERAL_HIDEBC))
+                DrawLineEx(equilateral->pointB, equilateral->pointC, equilateral->thickness, equilateral->lineColour);
+
             break;
     }
 }

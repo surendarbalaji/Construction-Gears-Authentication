@@ -22,8 +22,8 @@ CircleConstructor InitialiseCircle(Vector2 centre, Vector2 point, float speed, f
 void UpdateCircle(CircleConstructor* circle, float dt) {
     if (!circle->complete) {
         circle->progress += circle->speed * dt;
-        if (circle->progress >= 2.0f * PI) {
-            circle->progress = 2.0f * PI;
+        if (circle->progress >= 1.0f) {
+            circle->progress = 1.0f;
             circle->complete = true;
         }
     }
@@ -32,7 +32,7 @@ void UpdateCircle(CircleConstructor* circle, float dt) {
 // same manual method for drawing circle with ongoing arm rotation
 void DrawCircleConstruction(const CircleConstructor* circle) {
     const int segments = 100;
-    float step = circle->progress / segments;
+    float step = circle->progress * 2.0f * PI / segments;
 
     for (int i = 0; i < segments; i++) {
         float angle1 = circle->initial_angle + i * step;
@@ -50,7 +50,7 @@ void DrawCircleConstruction(const CircleConstructor* circle) {
         DrawLineEx(p1, p2, circle->thickness, circle->circleColour);
     }
 
-    float arm_angle = circle->initial_angle + circle->progress;
+    float arm_angle = circle->initial_angle + circle->progress * 2.0F * PI;
     Vector2 arm_end = {
         circle->centre.x + circle->radius * cosf(arm_angle),
         circle->centre.y + circle->radius * sinf(arm_angle)
