@@ -1,19 +1,28 @@
 #include "constructions.h"
 #include "raymath.h"
 
-EquilateralConstructor InitialiseEquilateral(Vector2 pointA, Vector2 pointB, float speed, float thickness, Color arcColour, Color lineColour) {
+EquilateralConstructor InitialiseEquilateral(Vector2 pointA, Vector2 pointB, Vector2 faceAwayFrom, float speed, float thickness, Color arcColour, Color lineColour) {
     EquilateralConstructor equilateral;
     equilateral.pointA = pointA;
     equilateral.pointB = pointB;
+    equilateral.faceAwayFrom = faceAwayFrom;
     equilateral.length = Vector2Distance(pointA, pointB);
     equilateral.speed = speed;
     equilateral.thickness = thickness;
     equilateral.arcColour = arcColour;
     equilateral.lineColour = lineColour;
     equilateral.initial_angle = atan2f(pointB.y - pointA.y, pointB.x - pointA.x);
-    equilateral.pointC = (Vector2){
+
+    Vector2 point1 = (Vector2) {
         pointA.x + equilateral.length * cosf(equilateral.initial_angle + PI/3),
-        pointA.y + equilateral.length * sinf(equilateral.initial_angle + PI/3)}; // intersection point
+        pointA.y + equilateral.length * sinf(equilateral.initial_angle + PI/3)}; // intersection point 1
+
+    Vector2 point2 = (Vector2) {
+        pointA.x + equilateral.length * cosf(equilateral.initial_angle - PI/3),
+        pointA.y + equilateral.length * sinf(equilateral.initial_angle - PI/3)}; // intersection point 2
+
+    equilateral.pointC = (Vector2Distance(point1, faceAwayFrom) > Vector2Distance(point2, faceAwayFrom)) ? point1 : point2;
+
     equilateral.progress = 0.0f;
     equilateral.phase = CIRCLES;
     equilateral.hideMask = 0;

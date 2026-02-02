@@ -19,8 +19,9 @@ int main(void) {
 
     // CircleConstructor circle = InitialiseCircle(v3, v4, 2.0f, 0.5f, GOLD, GRAY);
     // BisectorConstructor bisector = InitialiseBisector(v5, v6, 2.5f, 2.0f, BLUE, RED);
-    // EquilateralConstructor equilateral = InitialiseEquilateral(v0, v1, 0.5f, 2.0f, ORANGE, RAYWHITE);
-    EqualLineConstructor equalLine = InitialiseEqualLine(v0, v1, v6, 1.0f, 2.0f, RED, BLUE, RAYWHITE, GOLD);
+    // EquilateralConstructor equilateral = InitialiseEquilateral(v0, v1, 0, 0.5f, 2.0f, ORANGE, RAYWHITE);
+    // EqualLineConstructor equalLine = InitialiseEqualLine(v0, v1, v6, 1.0f, 2.0f, RED, BLUE, RAYWHITE, GOLD);
+    AngleBisectorConstructor angleBisector = InitialiseAngleBisector(v1, v5, v6, 1.0f, 2.0f, RAYWHITE, BLUE, RED, GOLD);
 
     SetTargetFPS(60);
 
@@ -36,14 +37,15 @@ int main(void) {
         // UpdateCircle(&circle, GetFrameTime());
         // UpdateBisector(&bisector, GetFrameTime());
         // UpdateEquilateral(&equilateral, GetFrameTime());
-        UpdateEqualLine(&equalLine, GetFrameTime());
+        // UpdateEqualLine(&equalLine, GetFrameTime());
+        UpdateAngleBisector(&angleBisector, GetFrameTime());
 
 
         BeginDrawing();
 
             ClearBackground(BLACK);
 
-            DrawText("the elements", 190, 200, 20, LIGHTGRAY);
+            DrawText("equal line construction", 190, 200, 20, LIGHTGRAY);
 
             // BeginBlendMode(1);
 
@@ -57,7 +59,9 @@ int main(void) {
             // DrawCircleConstruction(&circle);
             // DrawBisectorConstruction(&bisector);
             // DrawEquilateralConstruction(&equilateral);
-            DrawEqualLineConstruction(&equalLine);
+            // DrawEqualLineConstruction(&equalLine);
+            DrawAngleBisectorConstruction(&angleBisector);
+
 
         // EndBlendMode();
 

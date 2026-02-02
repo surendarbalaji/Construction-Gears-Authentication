@@ -70,6 +70,7 @@ typedef struct {
     Vector2 pointA;
     Vector2 pointB;
     Vector2 pointC;
+    Vector2 faceAwayFrom;
     float progress;
     float length;
     float speed;
@@ -90,9 +91,47 @@ typedef struct {
 #define EQUILATERAL_HIDEAC (1 << 1)
 #define EQUILATERAL_HIDEBC (1 << 2)
 
-EquilateralConstructor InitialiseEquilateral(Vector2 pointA, Vector2 pointB, float speed, float thickness, Color arcColour, Color lineColour);
+EquilateralConstructor InitialiseEquilateral(Vector2 pointA, Vector2 pointB, Vector2 faceAwayFrom, float speed, float thickness, Color arcColour, Color lineColour);
 void UpdateEquilateral(EquilateralConstructor* equilateral, float dt);
 void DrawEquilateralConstruction(const EquilateralConstructor* equilateral);
+
+
+// angle bisector construction tools
+
+typedef enum {
+    CIRCLEAD,
+    LINEDE,
+    EQUILATERALED,
+    LINEAF,
+    ANGLEBISECTORCOMPLETE
+} AngleBisectorPhase;
+
+typedef struct {
+    Vector2 pointB; // B first because I like working with angle BAC
+    Vector2 pointA;
+    Vector2 pointC;
+    Vector2 pointD;
+    Vector2 pointE;
+    float progress;
+    float length;
+    float speed;
+    float thickness;
+    float angle_BA;
+    float angle_EA;
+    Color lengthColour;
+    Color arcColour;
+    Color equilateralLineColour;
+    Color equilateralArcColour;
+    AngleBisectorPhase phase;
+
+    CircleConstructor circleAD;
+    EquilateralConstructor equilateralED;
+
+} AngleBisectorConstructor;
+
+AngleBisectorConstructor InitialiseAngleBisector(Vector2 pointB, Vector2 pointA, Vector2 pointC, float speed, float thickness, Color lengthColour, Color arcColour, Color equilateralLineColour, Color equilateralArcColour);
+void UpdateAngleBisector(AngleBisectorConstructor* angleBisector, float dt);
+void DrawAngleBisectorConstruction(const AngleBisectorConstructor* angleBisector);
 
 
 // equal line construction tools

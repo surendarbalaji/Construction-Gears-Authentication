@@ -16,7 +16,7 @@ EqualLineConstructor InitialiseEqualLine(Vector2 pointA, Vector2 pointB, Vector2
     equalLine.progress = 0.0f;
     equalLine.phase = LINEBC;
 
-    equalLine.equilateralBC = InitialiseEquilateral(pointB, pointC, speed, thickness, equilateralArcColour, equilateralLineColour);
+    equalLine.equilateralBC = InitialiseEquilateral(pointB, pointC, (Vector2){0}, speed, thickness, equilateralArcColour, equilateralLineColour);
     equalLine.circleBA = InitialiseCircle(pointB, pointA, speed, thickness, arcColour, lengthColour);
 
     // needs to be in this order since it references points from within the equilateral.
