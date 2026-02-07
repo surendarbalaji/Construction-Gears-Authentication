@@ -1,7 +1,12 @@
 #include "constructions.h"
 #include "raymath.h"
 
-EquilateralConstructor InitialiseEquilateral(Vector2 pointA, Vector2 pointB, Vector2 faceAwayFrom, float speed, float thickness, Color arcColour, Color lineColour) {
+#include <stdio.h>
+
+ColourConfiguration equilateralColours = { .line1 = WHITE, .arc1 = BLUE};
+
+
+EquilateralConstructor InitialiseEquilateral(Vector2 pointA, Vector2 pointB, Vector2 faceAwayFrom, float speed, float thickness, ColourConfiguration SelectedColours) {
     EquilateralConstructor equilateral;
     equilateral.pointA = pointA;
     equilateral.pointB = pointB;
@@ -9,8 +14,7 @@ EquilateralConstructor InitialiseEquilateral(Vector2 pointA, Vector2 pointB, Vec
     equilateral.length = Vector2Distance(pointA, pointB);
     equilateral.speed = speed;
     equilateral.thickness = thickness;
-    equilateral.arcColour = arcColour;
-    equilateral.lineColour = lineColour;
+    equilateral.colours = SelectedColours;
     equilateral.initial_angle = atan2f(pointB.y - pointA.y, pointB.x - pointA.x);
 
     // finding both intersections to allow for selection in certain situations (like wanting the triangle to face away from an angle bisection)
@@ -30,34 +34,37 @@ EquilateralConstructor InitialiseEquilateral(Vector2 pointA, Vector2 pointB, Vec
     equilateral.hideMask = 0;
 
     // assigning circle constructions to the equilateral construction
-    equilateral.circleA = InitialiseCircle(pointA, pointB, speed, thickness, arcColour, lineColour);
-    equilateral.circleB = InitialiseCircle(pointB, pointA, speed, thickness, arcColour, lineColour);
+    equilateral.circleA = InitialiseCircle(pointA, pointB, speed, thickness, equilateral.colours);
+    equilateral.circleB = InitialiseCircle(pointB, pointA, speed, thickness, equilateral.colours);
 
     return equilateral;
 }
 
 
 void UpdateEquilateral(EquilateralConstructor* equilateral, float dt) {
+    switch (equilateral->phase) {
 
-    equilateral->progress += equilateral->speed * dt;
-    UpdateCircle(&equilateral->circleA, dt);
-    UpdateCircle(&equilateral->circleB, dt);
+        case CIRCLES:
+            UpdateCircle(&equilateral->circleA, dt);
+            UpdateCircle(&equilateral->circleB, dt);
+            if (equilateral->circleA.complete && equilateral->circleB.complete) equilateral->phase = SIDES;
+            break;
 
-    if (equilateral->progress >= 1.0f) {
-        equilateral->progress = 0.0f;
-
-        switch (equilateral->phase) {
-            case CIRCLES:
-                equilateral->phase = SIDES;
-                break;
-            case SIDES:
+        case SIDES:
+            equilateral->progress += equilateral->speed * dt;
+            if (equilateral->progress >= 1.0f) {
+                equilateral->progress = 0.0f;
                 equilateral->phase = EQUILATERALCOMPLETE;
-                break;
-            case EQUILATERALCOMPLETE:
-                equilateral->phase = EQUILATERALCOMPLETE;
-                break;
             }
-        }
+            break;
+
+        case EQUILATERALCOMPLETE:
+            equilateral->circleA.hideMask = CIRCLE_HIDELINE;
+            equilateral->circleB.hideMask = CIRCLE_HIDELINE;
+            FadeConstruction(&equilateral->circleA.colours, 0.1f, 0.2f, dt);
+            FadeConstruction(&equilateral->circleB.colours, 0.1f, 0.2f, dt);
+            FadeConstruction(&equilateral->colours, 0.1f, 0.2f, dt);
+    }
 }
 
 void DrawEquilateralConstruction(const EquilateralConstructor* equilateral) {
@@ -71,26 +78,26 @@ void DrawEquilateralConstruction(const EquilateralConstructor* equilateral) {
 
         case SIDES:
 
-            DrawCircleLinesV(equilateral->pointA, equilateral->length, equilateral->arcColour);
-            DrawCircleLinesV(equilateral->pointB, equilateral->length, equilateral->arcColour);
-            DrawLineEx(equilateral->pointA, equilateral->pointB, equilateral->thickness, equilateral->lineColour);
+            DrawCircleConstruction(&equilateral->circleA);
+            DrawCircleConstruction(&equilateral->circleB);
+            DrawLineEx(equilateral->pointA, equilateral->pointB, equilateral->thickness, equilateral->colours.line1);
 
             // using lerp to animate drawing, dividing by 2pi since progress is multiplied to be an angle
-            DrawLineEx(equilateral->pointA, Vector2Lerp(equilateral->pointA, equilateral->pointC, equilateral->progress), equilateral->thickness, equilateral->lineColour);
-            DrawLineEx(equilateral->pointB, Vector2Lerp(equilateral->pointB, equilateral->pointC, equilateral->progress), equilateral->thickness, equilateral->lineColour);
+            DrawLineEx(equilateral->pointA, Vector2Lerp(equilateral->pointA, equilateral->pointC, equilateral->progress), equilateral->thickness, equilateral->colours.line1);
+            DrawLineEx(equilateral->pointB, Vector2Lerp(equilateral->pointB, equilateral->pointC, equilateral->progress), equilateral->thickness, equilateral->colours.line1);
             break;
 
         case EQUILATERALCOMPLETE:
 
-            DrawCircleLinesV(equilateral->pointA, equilateral->length, equilateral->arcColour);
-            DrawCircleLinesV(equilateral->pointB, equilateral->length, equilateral->arcColour);
+            DrawCircleConstruction(&equilateral->circleA);
+            DrawCircleConstruction(&equilateral->circleB);
 
             if (!(equilateral->hideMask & EQUILATERAL_HIDEAB))
-                DrawLineEx(equilateral->pointA, equilateral->pointB, equilateral->thickness, equilateral->lineColour);
+                DrawLineEx(equilateral->pointA, equilateral->pointB, equilateral->thickness, Fade(equilateral->colours.line1, equilateral->colours.alpha));
             if (!(equilateral->hideMask & EQUILATERAL_HIDEAC))
-                DrawLineEx(equilateral->pointA, equilateral->pointC, equilateral->thickness, equilateral->lineColour);
+                DrawLineEx(equilateral->pointA, equilateral->pointC, equilateral->thickness, Fade(equilateral->colours.line1, equilateral->colours.alpha));
             if (!(equilateral->hideMask & EQUILATERAL_HIDEBC))
-                DrawLineEx(equilateral->pointB, equilateral->pointC, equilateral->thickness, equilateral->lineColour);
+                DrawLineEx(equilateral->pointB, equilateral->pointC, equilateral->thickness, Fade(equilateral->colours.line1, equilateral->colours.alpha));
 
             break;
     }

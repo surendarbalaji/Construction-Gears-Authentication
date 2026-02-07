@@ -3,17 +3,17 @@
 
 
 // initialise all values that don't change for the same circle
-CircleConstructor InitialiseCircle(Vector2 centre, Vector2 point, float speed, float thickness, Color circleColor, Color radiusColor) {
+CircleConstructor InitialiseCircle(Vector2 centre, Vector2 point, float speed, float thickness, ColourConfiguration SelectedColours) {
     CircleConstructor circle;
     circle.centre = centre;
     circle.point = point;
     circle.radius = Vector2Distance(centre, point);
     circle.speed = speed;
     circle.thickness = thickness;
-    circle.circleColour = circleColor;
-    circle.radiusColour = radiusColor;
+    circle.colours = SelectedColours;
     circle.initial_angle = atan2f(point.y - centre.y, point.x - centre.x);
     circle.progress = 0.0f;
+    circle.hideMask = 0;
     circle.complete = false;
     return circle;
 }
@@ -31,7 +31,7 @@ void UpdateCircle(CircleConstructor* circle, float dt) {
 
 // same manual method for drawing circle with ongoing arm rotation
 void DrawCircleConstruction(const CircleConstructor* circle) {
-    const int segments = 100;
+    const int segments = 150;
     float step = circle->progress * 2.0f * PI / segments;
 
     for (int i = 0; i < segments; i++) {
@@ -47,7 +47,8 @@ void DrawCircleConstruction(const CircleConstructor* circle) {
             circle->centre.y + circle->radius * sinf(angle2)
         };
 
-        DrawLineEx(p1, p2, circle->thickness, circle->circleColour);
+        if (!((circle->hideMask & CIRCLE_HIDEARC) && (circle->complete)))
+            DrawLineEx(p1, p2, circle->thickness, Fade(circle->colours.arc1, circle->colours.alpha));
     }
 
     float arm_angle = circle->initial_angle + circle->progress * 2.0F * PI;
@@ -56,5 +57,6 @@ void DrawCircleConstruction(const CircleConstructor* circle) {
         circle->centre.y + circle->radius * sinf(arm_angle)
     };
 
-    DrawLineEx(circle->centre, arm_end, circle->thickness, circle->radiusColour);
+    if (!((circle->hideMask & CIRCLE_HIDELINE) && (circle->complete)))
+        DrawLineEx(circle->centre, arm_end, circle->thickness, Fade(circle->colours.line1, circle->colours.alpha));
 }

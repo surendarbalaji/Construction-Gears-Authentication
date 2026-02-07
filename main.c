@@ -17,12 +17,24 @@ int main(void) {
     Vector2 v5 = {screenWidth/2.0f + 150.0f, screenHeight/2.0f -300.0f };
     Vector2 v6 = {screenWidth/2.0f + 200.0f, screenHeight/2.0f +100.0f };
 
-    // CircleConstructor circle = InitialiseCircle(v3, v4, 2.0f, 0.5f, GOLD, GRAY);
-    // BisectorConstructor bisector = InitialiseBisector(v5, v6, 2.5f, 2.0f, BLUE, RED);
-    // EquilateralConstructor equilateral = InitialiseEquilateral(v0, v1, 0, 0.5f, 2.0f, ORANGE, RAYWHITE);
-    // EqualLineConstructor equalLine = InitialiseEqualLine(v0, v1, v6, 1.0f, 2.0f, RED, BLUE, RAYWHITE, GOLD);
-    AngleBisectorConstructor angleBisector = InitialiseAngleBisector(v1, v5, v6, 1.0f, 2.0f, RAYWHITE, BLUE, RED, GOLD);
+    ColourConfiguration BluePrint = {.line1 = RAYWHITE, .arc1 = BLUE, .alpha = 1.0f};
+    ColourConfiguration MonoChromed = {.line1 = RAYWHITE, .arc1 = GRAY, .alpha = 1.0f};
+    ColourConfiguration PoliceConstructions = {.line1 = RED, .arc1 = BLUE, .alpha = 1.0f};
+    ColourConfiguration FriedEggInversion = {.line1 = RAYWHITE, .arc1 = ORANGE, .alpha = 1.0f};
+    ColourConfiguration SunnySideUp = {.line1 = ORANGE, .arc1 = WHITE, .alpha = 1.0f};
 
+    ColourConfiguration SelectedColours = BluePrint; // select universal colour theme here
+
+
+    // CircleConstructor circle = InitialiseCircle(v3, v4, 2.0f, 0.5f, SelectedColours);
+    // BisectorConstructor bisector = InitialiseBisector(v5, v6, 2.5f, 2.0f, SelectedColours);
+    // EquilateralConstructor equilateral = InitialiseEquilateral(v0, v1, (Vector2){0}, 0.5f, 2.0f, SelectedColours);
+    // EqualLineConstructor equalLine = InitialiseEqualLine(v0, v1, v6, 1.0f, 2.0f, SelectedColours);
+    // AngleBisectorConstructor angleBisector = InitialiseAngleBisector(v1, v5, v6, 1.0f, 2.0f, SelectedColours);
+    // EqualLengthCutConstructor equalLengthCut = InitialiseEqualLengthCut(v1, v3, v5, v6, 0.5f, 2.0f, SelectedColours);
+    EqualAngleConstructor equalAngle = InitialiseEqualAngle(v5, v3, v4, v0, v1, 1.5f, 2.0f, SelectedColours);
+    // ParallelConstructor parallel = InitialiseParallel(v5, v3, v0, 4.0f, 1.0f, SelectedColours);
+    // PerpendicularConstructor perpendicular = InitialisePerpendicular(v0, v1, v0, 0.5f, 1.0f, SelectedColours);
     SetTargetFPS(60);
 
     while(!WindowShouldClose()) {
@@ -38,14 +50,17 @@ int main(void) {
         // UpdateBisector(&bisector, GetFrameTime());
         // UpdateEquilateral(&equilateral, GetFrameTime());
         // UpdateEqualLine(&equalLine, GetFrameTime());
-        UpdateAngleBisector(&angleBisector, GetFrameTime());
-
+        // UpdateAngleBisector(&angleBisector, GetFrameTime());
+        // UpdateEqualLengthCut(&equalLengthCut, GetFrameTime());
+        UpdateEqualAngle(&equalAngle, GetFrameTime());
+        // UpdateParallel(&parallel, GetFrameTime());
+        // UpdatePerpendicular(&perpendicular, GetFrameTime());
 
         BeginDrawing();
 
             ClearBackground(BLACK);
 
-            DrawText("equal line construction", 190, 200, 20, LIGHTGRAY);
+            DrawText("equal angle construction", 190, 200, 20, LIGHTGRAY);
 
             // BeginBlendMode(1);
 
@@ -60,8 +75,11 @@ int main(void) {
             // DrawBisectorConstruction(&bisector);
             // DrawEquilateralConstruction(&equilateral);
             // DrawEqualLineConstruction(&equalLine);
-            DrawAngleBisectorConstruction(&angleBisector);
-
+            // DrawAngleBisectorConstruction(&angleBisector);
+            // DrawEqualLengthCutConstruction(&equalLengthCut);
+            DrawEqualAngleConstruction(&equalAngle);
+            // DrawParallelConstruction(&parallel);
+            // DrawPerpendicularConstruction(&perpendicular);
 
         // EndBlendMode();
 

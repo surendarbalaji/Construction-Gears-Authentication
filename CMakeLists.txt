@@ -26,6 +26,11 @@ set(PROJECT_SOURCES
         ConstructEquilateral.c
         ConstructEqualLine.c
         ConstructAngleBisector.c
+        ConstructEqualLengthCut.c
+        ConstructEqualAngle.c
+        ConstructParallel.c
+        ConstructPerpendicular.c
+        FadeConstruction.c
 )
 
 # executables

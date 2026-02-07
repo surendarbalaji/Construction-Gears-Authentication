@@ -1,7 +1,12 @@
+#include <external/stb_truetype.h>
+
 #include "constructions.h"
 #include "raymath.h"
 
-EqualLineConstructor InitialiseEqualLine(Vector2 pointA, Vector2 pointB, Vector2 pointC, float speed, float thickness, Color lengthColour, Color arcColour, Color equilateralLineColour, Color equilateralArcColour) {
+ColourConfiguration equalLineColours = { .line1 = WHITE, .arc1 = BLUE};
+
+
+EqualLineConstructor InitialiseEqualLine(Vector2 pointA, Vector2 pointB, Vector2 pointC, float speed, float thickness, ColourConfiguration SelectedColours) {
     EqualLineConstructor equalLine;
     equalLine.pointA = pointA;
     equalLine.pointB = pointB;
@@ -9,15 +14,13 @@ EqualLineConstructor InitialiseEqualLine(Vector2 pointA, Vector2 pointB, Vector2
     equalLine.length = Vector2Distance(pointA, pointB);
     equalLine.speed = speed;
     equalLine.thickness = thickness;
-    equalLine.lengthColour = lengthColour;
-    equalLine.arcColour = arcColour;
-    equalLine.equilateralLineColour = equilateralLineColour;
-    equalLine.equilateralArcColour = equilateralArcColour;
+    equalLine.colours = SelectedColours;
     equalLine.progress = 0.0f;
     equalLine.phase = LINEBC;
+    equalLine.hideMask = 0;
 
-    equalLine.equilateralBC = InitialiseEquilateral(pointB, pointC, (Vector2){0}, speed, thickness, equilateralArcColour, equilateralLineColour);
-    equalLine.circleBA = InitialiseCircle(pointB, pointA, speed, thickness, arcColour, lengthColour);
+    equalLine.equilateralBC = InitialiseEquilateral(pointB, pointC, (Vector2){0}, speed, thickness, SelectedColours);
+    equalLine.circleBA = InitialiseCircle(pointB, pointA, speed, thickness, SelectedColours);
 
     // needs to be in this order since it references points from within the equilateral.
 
@@ -26,14 +29,13 @@ EqualLineConstructor InitialiseEqualLine(Vector2 pointA, Vector2 pointB, Vector2
     equalLine.pointE = (Vector2){pointB.x + equalLine.length * cosf(equalLine.angle_BE), pointB.y + equalLine.length * sinf(equalLine.angle_BE)}; // point to which DB extends
     equalLine.pointF = (Vector2){pointC.x + equalLine.length * cosf(equalLine.angle_CF), pointC.y + equalLine.length * sinf(equalLine.angle_CF)}; // point to which DC extends
 
-    equalLine.circleDE = InitialiseCircle(equalLine.equilateralBC.pointC, equalLine.pointE, speed, thickness, arcColour, equilateralLineColour);
+    equalLine.circleDE = InitialiseCircle(equalLine.equilateralBC.pointC, equalLine.pointE, speed, thickness, SelectedColours);
 
     return equalLine;
 }
 
 
 void UpdateEqualLine(EqualLineConstructor* equalLine, float dt) {
-    if (equalLine->phase == EQUALLINECOMPLETE) return;
 
     switch (equalLine->phase) {
 
@@ -78,6 +80,11 @@ void UpdateEqualLine(EqualLineConstructor* equalLine, float dt) {
             break;
 
         case EQUALLINECOMPLETE:
+            UpdateEquilateral(&equalLine->equilateralBC, dt);
+
+            FadeConstruction(&equalLine->colours, 0.1f, 0.2f, dt);
+            FadeConstruction(&equalLine->circleBA.colours, 0.1f, 0.2f, dt);
+            FadeConstruction(&equalLine->circleDE.colours, 0.1f, 0.2f, dt);
             equalLine->phase = EQUALLINECOMPLETE;
             break;
         }
@@ -89,12 +96,12 @@ void DrawEqualLineConstruction(const EqualLineConstructor* equalLine) {
     switch (equalLine->phase) {
 
         case LINEBC:
-            DrawLineEx(equalLine->pointA, equalLine->pointB, equalLine->thickness, equalLine->lengthColour);
-            DrawLineEx(equalLine->pointB, Vector2Lerp(equalLine->pointB, equalLine->pointC, equalLine->progress), equalLine->thickness, equalLine->equilateralLineColour);
+            DrawLineEx(equalLine->pointA, equalLine->pointB, equalLine->thickness, equalLine->colours.line1);
+            DrawLineEx(equalLine->pointB, Vector2Lerp(equalLine->pointB, equalLine->pointC, equalLine->progress), equalLine->thickness, equilateralColours.line1);
             break;
 
         case EQUILATERAL:
-            DrawLineEx(equalLine->pointA, equalLine->pointB, equalLine->thickness, equalLine->lengthColour);
+            DrawLineEx(equalLine->pointA, equalLine->pointB, equalLine->thickness, equalLine->colours.line1);
 
             DrawEquilateralConstruction(&equalLine->equilateralBC);
             break;
@@ -108,7 +115,7 @@ void DrawEqualLineConstruction(const EqualLineConstructor* equalLine) {
             DrawEquilateralConstruction(&equalLine->equilateralBC);
             DrawCircleConstruction(&equalLine->circleBA);
 
-            DrawLineEx(equalLine->pointB, Vector2Lerp(equalLine->pointB, equalLine->pointE, equalLine->progress), equalLine->thickness, equalLine->equilateralLineColour);
+            DrawLineEx(equalLine->pointB, Vector2Lerp(equalLine->pointB, equalLine->pointE, equalLine->progress), equalLine->thickness, equilateralColours.line1);
             break;
 
         case CIRCLEDE:
@@ -124,11 +131,12 @@ void DrawEqualLineConstruction(const EqualLineConstructor* equalLine) {
             DrawCircleConstruction(&equalLine->circleBA);
             DrawCircleConstruction(&equalLine->circleDE);
 
-            DrawLineEx(equalLine->pointC, Vector2Lerp(equalLine->pointC, equalLine->pointF, equalLine->progress), equalLine->thickness, equalLine->lengthColour);
+            DrawLineEx(equalLine->pointC, Vector2Lerp(equalLine->pointC, equalLine->pointF, equalLine->progress), equalLine->thickness, equalLine->colours.line1);
             break;
 
         case EQUALLINECOMPLETE:
-            DrawLineEx(equalLine->pointC, equalLine->pointF, equalLine->thickness, equalLine->lengthColour);
+            if (!(equalLine->hideMask & EQUALLINE_HIDEDC))
+                DrawLineEx(equalLine->pointC, equalLine->pointF, equalLine->thickness, Fade(equalLine->colours.line1, equalLine->colours.alpha));
 
             DrawEquilateralConstruction(&equalLine->equilateralBC);
             DrawCircleConstruction(&equalLine->circleBA);
