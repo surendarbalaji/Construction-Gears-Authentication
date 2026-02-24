@@ -21,16 +21,18 @@ FetchContent_MakeAvailable(raylib)
 # source files
 set(PROJECT_SOURCES
         main.c
-        ConstructCircle.c
-        ConstructBisector.c
-        ConstructEquilateral.c
-        ConstructEqualLine.c
-        ConstructAngleBisector.c
-        ConstructEqualLengthCut.c
-        ConstructEqualAngle.c
-        ConstructParallel.c
-        ConstructPerpendicular.c
+        constructions/ConstructCircle.c
+        constructions/ConstructBisector.c
+        constructions/ConstructEquilateral.c
+        constructions/ConstructEqualLine.c
+        constructions/ConstructAngleBisector.c
+        constructions/ConstructEqualLengthCut.c
+        constructions/ConstructEqualAngle.c
+        constructions/ConstructParallel.c
+        constructions/ConstructPerpendicular.c
         FadeConstruction.c
+        gear.c
+        gear.h
 )
 
 # executables

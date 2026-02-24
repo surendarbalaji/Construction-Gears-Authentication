@@ -1,8 +1,6 @@
 #include "constructions.h"
 #include "raymath.h"
 
-#include <stdio.h>
-
 ColourConfiguration equilateralColours = { .line1 = WHITE, .arc1 = BLUE};
 
 

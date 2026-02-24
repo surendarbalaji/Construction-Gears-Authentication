@@ -38,6 +38,7 @@ void UpdatePerpendicular(PerpendicularConstructor* perpendicular, float dt) {
             break;
 
         case EQUILATERALDE:
+            perpendicular->circleAC.hideMask = CIRCLE_HIDELINE;
             UpdateEquilateral(&perpendicular->equilateralED, dt);
             if (perpendicular->equilateralED.phase == EQUILATERALCOMPLETE) perpendicular->phase = LINEFC;
             break;

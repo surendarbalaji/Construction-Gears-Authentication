@@ -2,6 +2,7 @@
 #include "raylib.h"
 #include <stdint.h>
 
+
 // colour configuration struct to manegably configure colours while having a default for each construction
 
 typedef struct {
@@ -231,7 +232,7 @@ typedef struct {
 
 extern ColourConfiguration perpendicularColours;
 
-PerpendicularConstructor InitialisePerpendicular(Vector2 pointA, Vector2 pointB, Vector2 pointC, float speed, float thickness, ColourConfiguration perpendicularColours);
+PerpendicularConstructor InitialisePerpendicular(Vector2 pointA, Vector2 pointB, Vector2 pointC, float speed, float thickness, ColourConfiguration SelectedColours);
 void UpdatePerpendicular(PerpendicularConstructor* perpendicular, float dt);
 void DrawPerpendicularConstruction(const PerpendicularConstructor* angleBisector);
 
@@ -360,4 +361,20 @@ void UpdateBisector(BisectorConstructor* bisector, float dt);
 void DrawBisectorConstruction(const BisectorConstructor* bisector);
 
 
+// list of constructions, the forums call this a tagged union (rather fancy)
+
+typedef enum {
+    CIRCLE,
+    PERPENDICULAR,
+    PERPENDICULAR_BISECTOR
+} ConstructionType;
+
+typedef struct {
+    ConstructionType type;
+    union {
+        CircleConstructor circle;
+        PerpendicularConstructor perpendicular;
+        BisectorConstructor perpendicularBisector;
+    } data;
+} Construction;
 
