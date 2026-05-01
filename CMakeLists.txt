@@ -33,6 +33,8 @@ set(PROJECT_SOURCES
         FadeConstruction.c
         gear.c
         gear.h
+        input.c
+        input.h
 )
 
 # executables
@@ -43,3 +45,14 @@ target_link_libraries(${PROJECT_NAME} PRIVATE raylib)
 
 # including directories
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
+if (EMSCRIPTEN)
+
+    set_target_properties(Gears PROPERTIES SUFFIX ".html")
+
+    target_link_options(Gears PRIVATE
+            "-sUSE_GLFW=3"
+            "-sASYNCIFY=1"
+            "--preload-file" "${CMAKE_CURRENT_SOURCE_DIR}/resources@../resources"
+    )
+endif()

@@ -35,6 +35,9 @@ EquilateralConstructor InitialiseEquilateral(Vector2 pointA, Vector2 pointB, Vec
     equilateral.circleA = InitialiseCircle(pointA, pointB, speed, thickness, equilateral.colours);
     equilateral.circleB = InitialiseCircle(pointB, pointA, speed, thickness, equilateral.colours);
 
+    equilateral.circleA.hideMask = CIRCLE_HIDELINE;
+    equilateral.circleB.hideMask = CIRCLE_HIDELINE;
+
     return equilateral;
 }
 

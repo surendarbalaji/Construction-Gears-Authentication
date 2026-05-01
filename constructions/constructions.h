@@ -90,7 +90,7 @@ void DrawEquilateralConstruction(const EquilateralConstructor* equilateral);
 
 typedef enum {
     LINEBC,
-    EQUILATERAL,
+    EQUILATERALBC,
     CIRCLEBA,
     EXTENDDB,
     CIRCLEDE,
@@ -345,18 +345,21 @@ typedef enum {
 typedef struct {
     Vector2 pointA;
     Vector2 pointB;
+    Vector2 pointC;
+    Vector2 pointD;
     float progress;
     float length;
     float speed;
     float thickness;
     float initial_angle;
     float bisector_angle;
+    ColourConfiguration colours;
     Color arcColour;
     Color lineColour;
     BisectorPhase phase;
 } BisectorConstructor;
 
-BisectorConstructor InitialiseBisector(Vector2 pointA, Vector2 pointB, float speed, float thickness, Color arcColour, Color lineColour);
+BisectorConstructor InitialiseBisector(Vector2 pointA, Vector2 pointB, float speed, float thickness, ColourConfiguration SelectedColours);
 void UpdateBisector(BisectorConstructor* bisector, float dt);
 void DrawBisectorConstruction(const BisectorConstructor* bisector);
 
@@ -365,6 +368,7 @@ void DrawBisectorConstruction(const BisectorConstructor* bisector);
 
 typedef enum {
     CIRCLE,
+    EQUILATERAL,
     PERPENDICULAR,
     PERPENDICULAR_BISECTOR
 } ConstructionType;
@@ -373,6 +377,7 @@ typedef struct {
     ConstructionType type;
     union {
         CircleConstructor circle;
+        EquilateralConstructor equilateral;
         PerpendicularConstructor perpendicular;
         BisectorConstructor perpendicularBisector;
     } data;

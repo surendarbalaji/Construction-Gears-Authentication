@@ -43,11 +43,11 @@ void UpdateEqualLine(EqualLineConstructor* equalLine, float dt) {
             equalLine->progress += equalLine->speed * dt;
             if (equalLine->progress >= 1.0f) {
                 equalLine->progress = 0.0f;
-                equalLine->phase = EQUILATERAL;
+                equalLine->phase = EQUILATERALBC;
             }
             break;
 
-        case EQUILATERAL:
+        case EQUILATERALBC:
             UpdateEquilateral(&equalLine->equilateralBC, dt);
             if (equalLine->equilateralBC.phase == EQUILATERALCOMPLETE) equalLine->phase = CIRCLEBA;
             break;
@@ -100,7 +100,7 @@ void DrawEqualLineConstruction(const EqualLineConstructor* equalLine) {
             DrawLineEx(equalLine->pointB, Vector2Lerp(equalLine->pointB, equalLine->pointC, equalLine->progress), equalLine->thickness, equilateralColours.line1);
             break;
 
-        case EQUILATERAL:
+        case EQUILATERALBC:
             DrawLineEx(equalLine->pointA, equalLine->pointB, equalLine->thickness, equalLine->colours.line1);
 
             DrawEquilateralConstruction(&equalLine->equilateralBC);

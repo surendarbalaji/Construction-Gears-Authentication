@@ -3,19 +3,24 @@
 
 
 // initialise struct
-BisectorConstructor InitialiseBisector(Vector2 pointA, Vector2 pointB, float speed, float thickness, Color arcColour, Color lineColour) {
+BisectorConstructor InitialiseBisector(Vector2 pointA, Vector2 pointB, float speed, float thickness, ColourConfiguration SelectedColours) {
     BisectorConstructor bisector;
     bisector.pointA = pointA;
     bisector.pointB = pointB;
     bisector.length = Vector2Distance(pointA, pointB);
     bisector.speed = speed;
     bisector.thickness = thickness;
-    bisector.arcColour = arcColour;
-    bisector.lineColour = lineColour;
+    bisector.colours = SelectedColours;
+    bisector.arcColour = bisector.colours.arc1;
+    bisector.lineColour = bisector.colours.line1;
     bisector.initial_angle = atan2f(pointB.y - pointA.y, pointB.x - pointA.x);
     bisector.bisector_angle = bisector.initial_angle + PI/2;
     bisector.progress = 0.0f;
     bisector.phase = ARC1_CLOCKWISE;
+
+    bisector.pointC = (Vector2){(pointA.x + pointB.x) / 2 + (bisector.length * sinf(PI/3) * cosf(bisector.bisector_angle) * 1.2), (pointA.y + pointB.y) / 2 + (bisector.length * sinf(PI/3) * sinf(bisector.bisector_angle) * 1.2)};
+    bisector.pointD = (Vector2){(pointA.x + pointB.x) / 2 - (bisector.length * sinf(PI/3) * cosf(bisector.bisector_angle) * 1.2), (pointA.y + pointB.y) / 2 - (bisector.length * sinf(PI/3) * sinf(bisector.bisector_angle) * 1.2)};
+
     return bisector;
 }
 
@@ -164,11 +169,11 @@ void DrawBisectorConstruction(const BisectorConstructor* bisector) {
 
         case BISECTORCOMPLETE:
 
-            DrawRing(bisector->pointA, bisector->length, bisector->length + bisector->thickness, (360 * bisector->initial_angle) / (2 * PI) + 72 , (360 * bisector->initial_angle) / (2 * PI) - 72, 100, bisector->arcColour);
-            DrawRing(bisector->pointB, bisector->length, bisector->length + bisector->thickness, (360 * bisector->initial_angle) / (2 * PI) + 252, (360 * bisector->initial_angle) / (2 * PI) + 108, 100, bisector->arcColour);
-            DrawLineEx(bisector->pointA, bisector->pointB, bisector->thickness, bisector->lineColour);
+            DrawRing(bisector->pointA, bisector->length, bisector->length + bisector->thickness, (360 * bisector->initial_angle) / (2 * PI) + 72 , (360 * bisector->initial_angle) / (2 * PI) - 72, 100, Fade(bisector->arcColour, bisector->colours.alpha));
+            DrawRing(bisector->pointB, bisector->length, bisector->length + bisector->thickness, (360 * bisector->initial_angle) / (2 * PI) + 252, (360 * bisector->initial_angle) / (2 * PI) + 108, 100, Fade(bisector->arcColour, bisector->colours.alpha));
+            DrawLineEx(bisector->pointA, bisector->pointB, bisector->thickness, Fade(bisector->lineColour, bisector->colours.alpha));
 
-            DrawBisectingLine(bisector->pointA, bisector->pointB, bisector->length, bisector->bisector_angle, 1.0f, bisector->thickness, bisector->lineColour);
+            DrawBisectingLine(bisector->pointA, bisector->pointB, bisector->length, bisector->bisector_angle, 1.0f, bisector->thickness, Fade(bisector->lineColour, bisector->colours.alpha));
 
             break;
     }

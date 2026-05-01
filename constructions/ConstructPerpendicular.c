@@ -80,7 +80,7 @@ void DrawPerpendicularConstruction(const PerpendicularConstructor* perpendicular
         case PERPENDICULARCOMPLETE:
             DrawCircleConstruction(&perpendicular->circleAC);
             DrawEquilateralConstruction(&perpendicular->equilateralED);
-            DrawLineEx(perpendicular->equilateralED.pointC, perpendicular->pointC, perpendicular->thickness, perpendicular->colours.line1);
+            DrawLineEx(perpendicular->equilateralED.pointC, perpendicular->pointC, perpendicular->thickness, Fade(perpendicular->colours.line1, perpendicular->colours.alpha));
             break;
     }
 }
