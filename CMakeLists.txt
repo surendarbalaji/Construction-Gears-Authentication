@@ -53,6 +53,7 @@ if (EMSCRIPTEN)
     target_link_options(Gears PRIVATE
             "-sUSE_GLFW=3"
             "-sASYNCIFY=1"
+            "-sSTACK_SIZE=1048576"
             "--preload-file" "${CMAKE_CURRENT_SOURCE_DIR}/resources@../resources"
     )
 endif()
